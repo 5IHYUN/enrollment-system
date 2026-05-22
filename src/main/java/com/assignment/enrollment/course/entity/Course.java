@@ -28,7 +28,6 @@ public class Course extends BaseEntity {
     @Column(name = "title", nullable = false, length = 100)
     private String title;
 
-    @Lob // 큰 데이터 저장
     @Column(name = "description")
     private String description;
 
@@ -47,4 +46,23 @@ public class Course extends BaseEntity {
     @Enumerated(EnumType.STRING)
     @Column(name = "status", nullable = false, length = 20)
     private CourseStatus status;
+
+    public Course(
+            User creator,
+            String title,
+            String description,
+            BigDecimal price,
+            int capacity,
+            LocalDate startDate,
+            LocalDate endDate
+    ) {
+        this.creator = creator;
+        this.title = title;
+        this.description = description;
+        this.price = price;
+        this.capacity = capacity;
+        this.startDate = startDate;
+        this.endDate = endDate;
+        this.status = CourseStatus.DRAFT;
+    }
 }
