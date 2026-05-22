@@ -1,10 +1,14 @@
 package com.assignment.enrollment.course.controller;
 
 import com.assignment.enrollment.course.dto.CourseCreateRequest;
+import com.assignment.enrollment.course.dto.CourseResponse;
+import com.assignment.enrollment.course.entity.CourseStatus;
 import com.assignment.enrollment.course.service.CourseService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/classes")
@@ -18,5 +22,12 @@ public class CourseController {
             @Valid @RequestBody CourseCreateRequest request
     ) {
         return courseService.createCourse(userId, request);
+    }
+
+    @GetMapping
+    public List<CourseResponse> getCourses(
+            @RequestParam(required = false) CourseStatus status
+    ) {
+        return courseService.getCourses(status);
     }
 }

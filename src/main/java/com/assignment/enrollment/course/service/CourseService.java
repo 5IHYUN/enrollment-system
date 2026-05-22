@@ -2,7 +2,9 @@ package com.assignment.enrollment.course.service;
 
 
 import com.assignment.enrollment.course.dto.CourseCreateRequest;
+import com.assignment.enrollment.course.dto.CourseResponse;
 import com.assignment.enrollment.course.entity.Course;
+import com.assignment.enrollment.course.entity.CourseStatus;
 import com.assignment.enrollment.course.repository.CourseRepository;
 import com.assignment.enrollment.user.entity.User;
 import com.assignment.enrollment.user.entity.UserRole;
@@ -10,6 +12,8 @@ import com.assignment.enrollment.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -46,7 +50,14 @@ public class CourseService {
         return savedCourse.getId();
     }
     // 강의 조회
+    public List<CourseResponse> getCourses(CourseStatus status) {
+        CourseStatus searchStatus = status == null ? CourseStatus.OPEN : status;
 
+        return courseRepository.findByStatus(searchStatus)
+                .stream()
+                .map(CourseResponse::from)
+                .toList();
+    }
     // 강의 상세 조회
 
     // 강의 상태 변경
