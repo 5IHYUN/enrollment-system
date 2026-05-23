@@ -70,4 +70,10 @@ public class Enrollment extends BaseEntity {
         this.cancelledAt = LocalDateTime.now();
         this.status = EnrollmentStatus.CANCELLED;
     }
+
+    public void reEnroll() {
+        this.status = EnrollmentStatus.PENDING;
+        this.confirmedAt = null;
+        this.cancelledAt = null;
+    }
 }

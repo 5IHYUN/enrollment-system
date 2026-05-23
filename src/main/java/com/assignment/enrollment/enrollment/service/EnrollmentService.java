@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -39,7 +40,7 @@ public class EnrollmentService {
         if (course.getStatus() != CourseStatus.OPEN) {
             throw new IllegalStateException("모집 중인 강의만 신청할 수 있습니다.");
         }
-        // 이미 신청한 강의인지 검증 (CANCELLED 상태는 신청 가능)
+        // 이미 신청한 강의인지 검증
         boolean alreadyEnrolled = enrollmentRepository.existsByUserIdAndCourseIdAndStatusNot(
                 userId,
                 courseId,
@@ -58,6 +59,13 @@ public class EnrollmentService {
         if (currentEnrollmentCount >= course.getCapacity()) {
             throw new IllegalStateException("수강 정원이 초과되었습니다.");
         }
+        // CANCELLED 상태일 경우 CANCELLED -> PENDING 변경
+        Optional<Enrollment> restoredEnrollment = restoreCancelledEnrollment(userId, courseId);
+
+        if (restoredEnrollment.isPresent()) {
+            return restoredEnrollment.get().getId();
+        }
+
         // 신청 엔티티 생성, db insert
         Enrollment enrollment = new Enrollment(user, course);
         Enrollment savedEnrollment = enrollmentRepository.save(enrollment);
@@ -97,5 +105,22 @@ public class EnrollmentService {
                 .stream()
                 .map(EnrollmentResponse::from)
                 .toList();
+    }
+
+    /**
+     * 기존 CANCELLED 상태의 수강 신청 내역이 있으면
+     * 새 row를 생성하지 않고 다시 PENDING 상태로 복구한다.
+     */
+    private Optional<Enrollment> restoreCancelledEnrollment(Long userId, Long courseId) {
+        Optional<Enrollment> cancelledEnrollment =
+                enrollmentRepository.findByUserIdAndCourseIdAndStatus(
+                        userId,
+                        courseId,
+                        EnrollmentStatus.CANCELLED
+                );
+
+        cancelledEnrollment.ifPresent(Enrollment::reEnroll);
+
+        return cancelledEnrollment;
     }
 }
