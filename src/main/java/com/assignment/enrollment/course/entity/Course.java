@@ -3,6 +3,7 @@ package com.assignment.enrollment.course.entity;
 import com.assignment.enrollment.common.entity.BaseEntity;
 import com.assignment.enrollment.user.entity.User;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -64,5 +65,19 @@ public class Course extends BaseEntity {
         this.startDate = startDate;
         this.endDate = endDate;
         this.status = CourseStatus.DRAFT;
+    }
+
+    public void updateStatus(CourseStatus nextStatus) {
+        if (this.status == CourseStatus.DRAFT && nextStatus == CourseStatus.OPEN) {
+            this.status = nextStatus;
+            return;
+        }
+
+        if (this.status == CourseStatus.OPEN && nextStatus == CourseStatus.CLOSED) {
+            this.status = nextStatus;
+            return;
+        }
+
+        throw new IllegalStateException("변경할 수 없는 강의 상태입니다.");
     }
 }

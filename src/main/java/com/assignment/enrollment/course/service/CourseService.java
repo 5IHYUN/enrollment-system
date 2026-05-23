@@ -3,6 +3,7 @@ package com.assignment.enrollment.course.service;
 
 import com.assignment.enrollment.course.dto.CourseCreateRequest;
 import com.assignment.enrollment.course.dto.CourseResponse;
+import com.assignment.enrollment.course.dto.CourseStatusUpdateRequest;
 import com.assignment.enrollment.course.entity.Course;
 import com.assignment.enrollment.course.entity.CourseStatus;
 import com.assignment.enrollment.course.repository.CourseRepository;
@@ -50,6 +51,7 @@ public class CourseService {
         return savedCourse.getId();
     }
     // 강의 조회
+    @Transactional(readOnly = true)
     public List<CourseResponse> getCourses(CourseStatus status) {
         CourseStatus searchStatus = status == null ? CourseStatus.OPEN : status;
 
@@ -61,6 +63,24 @@ public class CourseService {
     // 강의 상세 조회
 
     // 강의 상태 변경
+    @Transactional
+    public void updateCourseStatus(
+            Long userId,
+            Long courseId,
+            CourseStatusUpdateRequest request
+    ) {
+        User creator = userRepository.findById(userId)
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 사용자입니다."));
+
+        Course course = courseRepository.findById(courseId)
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 강의입니다."));
+
+        if (!course.getCreator().getId().equals(creator.getId())) {
+            throw new IllegalStateException("본인이 생성한 강의만 상태를 변경할 수 있습니다.");
+        }
+
+        course.updateStatus(request.status());
+    }
 
 
 

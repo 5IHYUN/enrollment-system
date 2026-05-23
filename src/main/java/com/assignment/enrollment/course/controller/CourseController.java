@@ -2,6 +2,7 @@ package com.assignment.enrollment.course.controller;
 
 import com.assignment.enrollment.course.dto.CourseCreateRequest;
 import com.assignment.enrollment.course.dto.CourseResponse;
+import com.assignment.enrollment.course.dto.CourseStatusUpdateRequest;
 import com.assignment.enrollment.course.entity.CourseStatus;
 import com.assignment.enrollment.course.service.CourseService;
 import jakarta.validation.Valid;
@@ -29,5 +30,16 @@ public class CourseController {
             @RequestParam(required = false) CourseStatus status
     ) {
         return courseService.getCourses(status);
+    }
+
+
+
+    @PatchMapping("/{courseId}/status")
+    public void updateCourseStatus(
+            @RequestHeader("X-USER-ID") Long userId,
+            @PathVariable Long courseId,
+            @Valid @RequestBody CourseStatusUpdateRequest request
+    ) {
+        courseService.updateCourseStatus(userId, courseId, request);
     }
 }
