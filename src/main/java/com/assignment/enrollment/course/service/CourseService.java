@@ -8,6 +8,8 @@ import com.assignment.enrollment.course.dto.CourseStatusUpdateRequest;
 import com.assignment.enrollment.course.entity.Course;
 import com.assignment.enrollment.course.entity.CourseStatus;
 import com.assignment.enrollment.course.repository.CourseRepository;
+import com.assignment.enrollment.enrollment.entity.EnrollmentStatus;
+import com.assignment.enrollment.enrollment.repository.EnrollmentRepository;
 import com.assignment.enrollment.user.entity.User;
 import com.assignment.enrollment.user.entity.UserRole;
 import com.assignment.enrollment.user.repository.UserRepository;
@@ -21,8 +23,8 @@ import java.util.List;
 @RequiredArgsConstructor
 public class CourseService {
     private final CourseRepository courseRepository;
-
     private final UserRepository userRepository;
+    private final EnrollmentRepository enrollmentRepository;
     // 강의 생성
     @Transactional
     public Long createCourse(Long userId, CourseCreateRequest request) {
@@ -66,8 +68,11 @@ public class CourseService {
     public CourseDetailResponse getCourse(Long courseId) {
         Course course = courseRepository.findById(courseId)
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 강의입니다."));
-
-        long currentEnrollmentCount = 0L;
+        // 실제 신청 인원 수를 DB에서 조회
+        long currentEnrollmentCount = enrollmentRepository.countByCourseIdAndStatusIn(
+                courseId,
+                List.of(EnrollmentStatus.PENDING, EnrollmentStatus.CONFIRMED)
+        );
 
         return CourseDetailResponse.of(course, currentEnrollmentCount);
     }

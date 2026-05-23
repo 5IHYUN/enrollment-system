@@ -64,6 +64,17 @@ public class EnrollmentService {
         return savedEnrollment.getId();
     }
     // 결제(상태 변경)
+    @Transactional
+    public void confirm(Long userId, Long enrollmentId) {
+        Enrollment enrollment = enrollmentRepository.findById(enrollmentId)
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 수강 신청입니다."));
+
+        if (!enrollment.getUser().getId().equals(userId)) {
+            throw new IllegalStateException("본인의 수강 신청만 확정할 수 있습니다.");
+        }
+
+        enrollment.confirm();
+    }
 
     // 수강 취소
 

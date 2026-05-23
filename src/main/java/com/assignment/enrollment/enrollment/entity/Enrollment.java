@@ -52,5 +52,11 @@ public class Enrollment extends BaseEntity {
         this.course = course;
         this.status = EnrollmentStatus.PENDING;
     }
+    public void confirm() {
+        if (this.status != EnrollmentStatus.PENDING) {
+            throw new IllegalStateException("결제 대기 상태만 확정할 수 있습니다.");
+        }
 
+        this.status = EnrollmentStatus.CONFIRMED;
+    }
 }
