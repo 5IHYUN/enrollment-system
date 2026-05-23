@@ -8,6 +8,8 @@ import com.assignment.enrollment.course.dto.CourseStatusUpdateRequest;
 import com.assignment.enrollment.course.entity.Course;
 import com.assignment.enrollment.course.entity.CourseStatus;
 import com.assignment.enrollment.course.repository.CourseRepository;
+import com.assignment.enrollment.enrollment.entity.EnrollmentStatus;
+import com.assignment.enrollment.enrollment.repository.EnrollmentRepository;
 import com.assignment.enrollment.user.entity.User;
 import com.assignment.enrollment.user.entity.UserRole;
 import com.assignment.enrollment.user.repository.UserRepository;
@@ -33,9 +35,10 @@ import static org.mockito.Mockito.*;
 public class CourseServiceTest {
     @Mock
     private CourseRepository courseRepository;
-
     @Mock
     private UserRepository userRepository;
+    @Mock
+    private EnrollmentRepository enrollmentRepository;
 
     @InjectMocks
     private CourseService courseService;
@@ -219,7 +222,10 @@ public class CourseServiceTest {
         Course course = createCourse(courseId, creator, request);
 
         when(courseRepository.findById(courseId)).thenReturn(Optional.of(course));
-
+        when(enrollmentRepository.countByCourseIdAndStatusIn(
+                courseId,
+                List.of(EnrollmentStatus.PENDING, EnrollmentStatus.CONFIRMED)
+        )).thenReturn(0L);
         // when: 강의 상세를 조회한다
         CourseDetailResponse response = courseService.getCourse(courseId);
 
