@@ -12,6 +12,7 @@ import com.assignment.enrollment.user.entity.UserRole;
 import com.assignment.enrollment.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
@@ -25,7 +26,7 @@ public class EnrollmentService {
     private final UserRepository userRepository;
 
     // 수강 신청
-    @Transactional
+    @Transactional(isolation = Isolation.READ_COMMITTED)
     public Long enroll(Long userId, Long courseId) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 사용자입니다."));
