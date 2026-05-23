@@ -56,7 +56,7 @@ public class Enrollment extends BaseEntity {
         if (this.status != EnrollmentStatus.PENDING) {
             throw new IllegalStateException("결제 대기 상태만 확정할 수 있습니다.");
         }
-
+        this.confirmedAt = LocalDateTime.now();
         this.status = EnrollmentStatus.CONFIRMED;
     }
 }
