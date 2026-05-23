@@ -2,6 +2,7 @@ package com.assignment.enrollment.course.service;
 
 
 import com.assignment.enrollment.course.dto.CourseCreateRequest;
+import com.assignment.enrollment.course.dto.CourseDetailResponse;
 import com.assignment.enrollment.course.dto.CourseResponse;
 import com.assignment.enrollment.course.dto.CourseStatusUpdateRequest;
 import com.assignment.enrollment.course.entity.Course;
@@ -61,6 +62,15 @@ public class CourseService {
                 .toList();
     }
     // 강의 상세 조회
+    @Transactional(readOnly = true)
+    public CourseDetailResponse getCourse(Long courseId) {
+        Course course = courseRepository.findById(courseId)
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 강의입니다."));
+
+        long currentEnrollmentCount = 0L;
+
+        return CourseDetailResponse.of(course, currentEnrollmentCount);
+    }
 
     // 강의 상태 변경
     @Transactional
