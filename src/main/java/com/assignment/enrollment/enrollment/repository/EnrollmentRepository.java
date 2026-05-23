@@ -5,6 +5,7 @@ import com.assignment.enrollment.enrollment.entity.EnrollmentStatus;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface EnrollmentRepository extends JpaRepository<Enrollment, Long> {
 
@@ -20,4 +21,11 @@ public interface EnrollmentRepository extends JpaRepository<Enrollment, Long> {
     );
 
     List<Enrollment> findByUserId(Long userId);
+
+
+    Optional<Enrollment> findByUserIdAndCourseIdAndStatus(
+            Long userId,
+            Long courseId,
+            EnrollmentStatus status
+    );
 }
