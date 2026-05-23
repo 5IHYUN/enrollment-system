@@ -1,4 +1,23 @@
 package com.assignment.enrollment.enrollment.repository;
 
-public interface EnrollmentRepository {
+import com.assignment.enrollment.enrollment.entity.Enrollment;
+import com.assignment.enrollment.enrollment.entity.EnrollmentStatus;
+import org.springframework.data.jpa.repository.JpaRepository;
+
+import java.util.List;
+
+public interface EnrollmentRepository extends JpaRepository<Enrollment, Long> {
+
+    boolean existsByUserIdAndCourseIdAndStatusNot(
+            Long userId,
+            Long courseId,
+            EnrollmentStatus status
+    );
+
+    long countByCourseIdAndStatusIn(
+            Long courseId,
+            List<EnrollmentStatus> statuses
+    );
+
+    List<Enrollment> findByUserId(Long userId);
 }

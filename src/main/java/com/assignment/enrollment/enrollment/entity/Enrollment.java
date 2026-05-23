@@ -46,4 +46,11 @@ public class Enrollment extends BaseEntity {
 
     @Column(name = "cancelled_at")
     private LocalDateTime cancelledAt;
+
+    public Enrollment(User user, Course course) {
+        this.user = user;
+        this.course = course;
+        this.status = EnrollmentStatus.PENDING;
+    }
+
 }
