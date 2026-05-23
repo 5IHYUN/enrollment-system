@@ -152,43 +152,7 @@ public class CourseServiceTest {
         verify(courseRepository, never()).save(any(Course.class));
     }
 
-    private User createUser(Long id, UserRole role) {
-        User user = new User("test", role);
-        ReflectionTestUtils.setField(user, "id", id);
-        return user;
-    }
 
-    private CourseCreateRequest createCourseCreateRequest(
-            LocalDate startDate,
-            LocalDate endDate
-    ) {
-        return new CourseCreateRequest(
-                "Spring Boot 입문",
-                "스프링 부트 기초 강의입니다.",
-                BigDecimal.valueOf(50000),
-                30,
-                startDate,
-                endDate
-        );
-    }
-
-    private Course createCourse(
-            Long id,
-            User creator,
-            CourseCreateRequest request
-    ) {
-        Course course = new Course(
-                creator,
-                request.title(),
-                request.description(),
-                request.price(),
-                request.capacity(),
-                request.startDate(),
-                request.endDate()
-        );
-        ReflectionTestUtils.setField(course, "id", id);
-        return course;
-    }
     @Test
     @DisplayName("강의 목록을 조회할 수 있다")
     void getCourses_success() {
@@ -361,5 +325,43 @@ public class CourseServiceTest {
         assertThatThrownBy(() -> courseService.updateCourseStatus(userId, courseId, request))
                 .isInstanceOf(IllegalStateException.class)
                 .hasMessage("변경할 수 없는 강의 상태입니다.");
+    }
+
+    private User createUser(Long id, UserRole role) {
+        User user = new User("test", role);
+        ReflectionTestUtils.setField(user, "id", id);
+        return user;
+    }
+
+    private CourseCreateRequest createCourseCreateRequest(
+            LocalDate startDate,
+            LocalDate endDate
+    ) {
+        return new CourseCreateRequest(
+                "Spring Boot 입문",
+                "스프링 부트 기초 강의입니다.",
+                BigDecimal.valueOf(50000),
+                30,
+                startDate,
+                endDate
+        );
+    }
+
+    private Course createCourse(
+            Long id,
+            User creator,
+            CourseCreateRequest request
+    ) {
+        Course course = new Course(
+                creator,
+                request.title(),
+                request.description(),
+                request.price(),
+                request.capacity(),
+                request.startDate(),
+                request.endDate()
+        );
+        ReflectionTestUtils.setField(course, "id", id);
+        return course;
     }
 }
