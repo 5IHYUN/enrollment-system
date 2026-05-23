@@ -3,6 +3,7 @@ package com.assignment.enrollment.enrollment.service;
 import com.assignment.enrollment.course.entity.Course;
 import com.assignment.enrollment.course.entity.CourseStatus;
 import com.assignment.enrollment.course.repository.CourseRepository;
+import com.assignment.enrollment.enrollment.dto.EnrollmentResponse;
 import com.assignment.enrollment.enrollment.entity.Enrollment;
 import com.assignment.enrollment.enrollment.entity.EnrollmentStatus;
 import com.assignment.enrollment.enrollment.repository.EnrollmentRepository;
@@ -87,5 +88,14 @@ public class EnrollmentService {
         }
 
         enrollment.cancel();
+    }
+
+    // 내 수강 신청 목록 조회
+    @Transactional(readOnly = true)
+    public List<EnrollmentResponse> getMyEnrollments(Long userId) {
+        return enrollmentRepository.findByUserId(userId)
+                .stream()
+                .map(EnrollmentResponse::from)
+                .toList();
     }
 }

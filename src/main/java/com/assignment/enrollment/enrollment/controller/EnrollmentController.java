@@ -1,9 +1,12 @@
 package com.assignment.enrollment.enrollment.controller;
 
 
+import com.assignment.enrollment.enrollment.dto.EnrollmentResponse;
 import com.assignment.enrollment.enrollment.service.EnrollmentService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/enrollments")
@@ -35,5 +38,12 @@ public class EnrollmentController {
             @PathVariable Long enrollmentId
     ) {
         enrollmentService.cancel(userId, enrollmentId);
+    }
+    // 내 수강 신청 목록 조회
+    @GetMapping("/me")
+    public List<EnrollmentResponse> getMyEnrollments(
+            @RequestHeader("X-USER-ID") Long userId
+    ) {
+        return enrollmentService.getMyEnrollments(userId);
     }
 }
