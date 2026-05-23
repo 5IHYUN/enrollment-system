@@ -6,22 +6,29 @@ import com.assignment.enrollment.course.entity.CourseStatus;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
-public record CourseResponse(
+public record CourseDetailResponse(
         Long courseId,
         String title,
+        String description,
         BigDecimal price,
         int capacity,
+        long currentEnrollmentCount,
         LocalDate startDate,
         LocalDate endDate,
         CourseStatus status
 ) {
 
-    public static CourseResponse from(Course course) {
-        return new CourseResponse(
+    public static CourseDetailResponse of(
+            Course course,
+            long currentEnrollmentCount
+    ) {
+        return new CourseDetailResponse(
                 course.getId(),
                 course.getTitle(),
+                course.getDescription(),
                 course.getPrice(),
                 course.getCapacity(),
+                currentEnrollmentCount,
                 course.getStartDate(),
                 course.getEndDate(),
                 course.getStatus()

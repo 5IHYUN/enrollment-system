@@ -3,6 +3,7 @@ package com.assignment.enrollment.course.entity;
 import com.assignment.enrollment.common.entity.BaseEntity;
 import com.assignment.enrollment.user.entity.User;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -28,7 +29,6 @@ public class Course extends BaseEntity {
     @Column(name = "title", nullable = false, length = 100)
     private String title;
 
-    @Lob // 큰 데이터 저장
     @Column(name = "description")
     private String description;
 
@@ -47,4 +47,37 @@ public class Course extends BaseEntity {
     @Enumerated(EnumType.STRING)
     @Column(name = "status", nullable = false, length = 20)
     private CourseStatus status;
+
+    public Course(
+            User creator,
+            String title,
+            String description,
+            BigDecimal price,
+            int capacity,
+            LocalDate startDate,
+            LocalDate endDate
+    ) {
+        this.creator = creator;
+        this.title = title;
+        this.description = description;
+        this.price = price;
+        this.capacity = capacity;
+        this.startDate = startDate;
+        this.endDate = endDate;
+        this.status = CourseStatus.DRAFT;
+    }
+
+    public void updateStatus(CourseStatus nextStatus) {
+        if (this.status == CourseStatus.DRAFT && nextStatus == CourseStatus.OPEN) {
+            this.status = nextStatus;
+            return;
+        }
+
+        if (this.status == CourseStatus.OPEN && nextStatus == CourseStatus.CLOSED) {
+            this.status = nextStatus;
+            return;
+        }
+
+        throw new IllegalStateException("변경할 수 없는 강의 상태입니다.");
+    }
 }
