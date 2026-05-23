@@ -63,10 +63,11 @@ public class Enrollment extends BaseEntity {
         if (this.status == EnrollmentStatus.CANCELLED) {
             throw new IllegalStateException("이미 취소된 신청입니다.");
         }
-//        if (this.status == EnrollmentStatus.CONFIRMED
-//                && this.confirmedAt.plusDays(7).isBefore(LocalDateTime.now())) {
-//            throw new IllegalStateException("취소 가능 기간이 지났습니다.");
-//        }
+        // 확정 후 7일 이내만 취소 가능
+        if (this.status == EnrollmentStatus.CONFIRMED
+                && this.confirmedAt.plusDays(7).isBefore(LocalDateTime.now())) {
+            throw new IllegalStateException("취소 가능 기간이 지났습니다.");
+        }
         this.cancelledAt = LocalDateTime.now();
         this.status = EnrollmentStatus.CANCELLED;
     }
