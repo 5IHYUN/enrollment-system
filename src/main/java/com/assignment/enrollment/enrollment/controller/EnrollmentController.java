@@ -28,4 +28,12 @@ public class EnrollmentController {
     ) {
         enrollmentService.confirm(userId, enrollmentId);
     }
+    // 수강 취소
+    @PatchMapping("/{enrollmentId}/cancel")
+    public void cancel(
+            @RequestHeader("X-USER-ID") Long userId,
+            @PathVariable Long enrollmentId
+    ) {
+        enrollmentService.cancel(userId, enrollmentId);
+    }
 }
