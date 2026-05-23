@@ -52,5 +52,22 @@ public class Enrollment extends BaseEntity {
         this.course = course;
         this.status = EnrollmentStatus.PENDING;
     }
-
+    public void confirm() {
+        if (this.status != EnrollmentStatus.PENDING) {
+            throw new IllegalStateException("결제 대기 상태만 확정할 수 있습니다.");
+        }
+        this.confirmedAt = LocalDateTime.now();
+        this.status = EnrollmentStatus.CONFIRMED;
+    }
+    public void cancel() {
+        if (this.status == EnrollmentStatus.CANCELLED) {
+            throw new IllegalStateException("이미 취소된 신청입니다.");
+        }
+//        if (this.status == EnrollmentStatus.CONFIRMED
+//                && this.confirmedAt.plusDays(7).isBefore(LocalDateTime.now())) {
+//            throw new IllegalStateException("취소 가능 기간이 지났습니다.");
+//        }
+        this.cancelledAt = LocalDateTime.now();
+        this.status = EnrollmentStatus.CANCELLED;
+    }
 }
