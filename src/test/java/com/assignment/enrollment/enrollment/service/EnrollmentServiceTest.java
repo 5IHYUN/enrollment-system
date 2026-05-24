@@ -20,6 +20,7 @@ import org.springframework.test.util.ReflectionTestUtils;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -376,6 +377,35 @@ class EnrollmentServiceTest {
     }
 
     @Test
+    @DisplayName("CONFIRMED 상태라도 결제 확정 후 7일이 지나면 취소할 수 없다")
+    void cancel_fail_confirmed_after_7_days() {
+        // given
+        Long userId = 2L;
+        Long enrollmentId = 1L;
+
+        User student = createUser(userId, UserRole.STUDENT);
+        Course course = createCourse(1L, createUser(1L, UserRole.CREATOR), CourseStatus.OPEN, 30);
+        Enrollment enrollment = createEnrollment(enrollmentId, student, course, EnrollmentStatus.CONFIRMED);
+
+        ReflectionTestUtils.setField(
+                enrollment,
+                "confirmedAt",
+                LocalDateTime.now().minusDays(8)
+        );
+
+        when(enrollmentRepository.findById(enrollmentId)).thenReturn(Optional.of(enrollment));
+
+        // when & then
+        assertThatThrownBy(() -> enrollmentService.cancel(userId, enrollmentId))
+                .isInstanceOf(IllegalStateException.class)
+                .hasMessage("취소 가능 기간이 지났습니다.");
+
+        assertThat(enrollment.getStatus()).isEqualTo(EnrollmentStatus.CONFIRMED);
+        assertThat(enrollment.getCancelledAt()).isNull();
+    }
+
+
+    @Test
     @DisplayName("이미 취소된 신청은 다시 취소할 수 없다")
     void cancel_fail_alreadyCancelled() {
         // given
@@ -466,6 +496,12 @@ class EnrollmentServiceTest {
     ) {
         Enrollment enrollment = new Enrollment(user, course);
         ReflectionTestUtils.setField(enrollment, "id", id);
+
+        if (status == EnrollmentStatus.CONFIRMED) {
+            enrollment.confirm();
+            return enrollment;
+        }
+
         ReflectionTestUtils.setField(enrollment, "status", status);
         return enrollment;
     }
