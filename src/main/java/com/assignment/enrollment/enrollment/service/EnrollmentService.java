@@ -3,6 +3,7 @@ package com.assignment.enrollment.enrollment.service;
 import com.assignment.enrollment.course.entity.Course;
 import com.assignment.enrollment.course.entity.CourseStatus;
 import com.assignment.enrollment.course.repository.CourseRepository;
+import com.assignment.enrollment.course.dto.CourseStudentResponse;
 import com.assignment.enrollment.enrollment.dto.EnrollmentResponse;
 import com.assignment.enrollment.enrollment.entity.Enrollment;
 import com.assignment.enrollment.enrollment.entity.EnrollmentStatus;
@@ -107,6 +108,7 @@ public class EnrollmentService {
                 .map(EnrollmentResponse::from)
                 .toList();
     }
+
 
     /**
      * 기존 CANCELLED 상태의 수강 신청 내역이 있으면

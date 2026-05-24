@@ -1,10 +1,7 @@
 package com.assignment.enrollment.course.service;
 
 
-import com.assignment.enrollment.course.dto.CourseCreateRequest;
-import com.assignment.enrollment.course.dto.CourseDetailResponse;
-import com.assignment.enrollment.course.dto.CourseResponse;
-import com.assignment.enrollment.course.dto.CourseStatusUpdateRequest;
+import com.assignment.enrollment.course.dto.*;
 import com.assignment.enrollment.course.entity.Course;
 import com.assignment.enrollment.course.entity.CourseStatus;
 import com.assignment.enrollment.course.repository.CourseRepository;
@@ -97,6 +94,30 @@ public class CourseService {
         course.updateStatus(request.status());
     }
 
+    // 강의별 수강생 목록 조회
+    @Transactional(readOnly = true)
+    public List<CourseStudentResponse> getStudents(Long creatorId, Long courseId){
+        User creator = userRepository.findById(creatorId)
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 사용자입니다."));
 
+        if (creator.getRole() != UserRole.CREATOR) {
+            throw new IllegalStateException("크리에이터만 수강생 목록을 조회할 수 있습니다.");
+        }
+
+        Course course = courseRepository.findById(courseId)
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 강의입니다."));
+
+        if (!course.getCreator().getId().equals(creatorId)) {
+            throw new IllegalStateException("본인이 생성한 강의의 수강생 목록만 조회할 수 있습니다.");
+        }
+
+        return enrollmentRepository.findAllByCourseIdAndStatusIn(
+                        courseId,
+                        List.of(EnrollmentStatus.PENDING, EnrollmentStatus.CONFIRMED)
+                )
+                .stream()
+                .map(CourseStudentResponse::from)
+                .toList();
+    }
 
 }

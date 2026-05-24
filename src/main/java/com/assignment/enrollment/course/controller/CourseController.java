@@ -1,9 +1,6 @@
 package com.assignment.enrollment.course.controller;
 
-import com.assignment.enrollment.course.dto.CourseCreateRequest;
-import com.assignment.enrollment.course.dto.CourseDetailResponse;
-import com.assignment.enrollment.course.dto.CourseResponse;
-import com.assignment.enrollment.course.dto.CourseStatusUpdateRequest;
+import com.assignment.enrollment.course.dto.*;
 import com.assignment.enrollment.course.entity.CourseStatus;
 import com.assignment.enrollment.course.service.CourseService;
 import jakarta.validation.Valid;
@@ -49,5 +46,13 @@ public class CourseController {
             @Valid @RequestBody CourseStatusUpdateRequest request
     ) {
         courseService.updateCourseStatus(userId, courseId, request);
+    }
+    // 강의별 수강생 조회
+    @GetMapping("/{courseId}/students")
+    public List<CourseStudentResponse> getStudents(
+            @RequestHeader("X-USER-ID") Long creatorId,
+            @PathVariable Long courseId
+    ) {
+        return courseService.getStudents(creatorId, courseId);
     }
 }
