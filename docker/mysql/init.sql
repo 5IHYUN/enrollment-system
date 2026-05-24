@@ -50,4 +50,5 @@ VALUES
     (1,'creator1','CREATOR', NOW(), NOW()),
     (2,'student1','STUDENT', NOW(), NOW()),
     (3,'student2','STUDENT', NOW(), NOW()),
-    (4,'student3','STUDENT', NOW(), NOW());
+    (4,'student3','STUDENT', NOW(), NOW()),
+    (5,'creator2','CREATOR', NOW(), NOW());
